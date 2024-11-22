@@ -23,6 +23,7 @@ export class ApiService {
 
     if (data.current.hasQueue === "yes") {
       this.queues[queue] = data;
+      this.queuesHash[queue] = this.generateHash(JSON.stringify(data.graphs));
       return data;
     }
   }
@@ -47,7 +48,7 @@ export class ApiService {
 
     for (const queue of queues) {
       const data = await this.makeRequest(queue);
-      const hash = this.generateHash(JSON.stringify(data));
+      const hash = this.generateHash(JSON.stringify(data.graphs));
 
       if (!this.queues[queue]) {
         this.queues[queue] = data;
@@ -72,7 +73,7 @@ export class ApiService {
   }
 
   private async makeRequest(queue: number): Promise<QueueData> {
-    console.count("makeRequest /GavByQueue");
+    console.count(`makeRequest /GavByQueue ${queue}`);
 
     const request = await fetch(this.baseUrl + "/GavByQueue", {
       body: JSON.stringify({ queue }),
